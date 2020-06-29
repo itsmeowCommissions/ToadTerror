@@ -26,5 +26,26 @@
 				"name": "toadterror:toad_sentinel_idle"
 			}
 		]
+	},
+	"entity.toadprotector.death": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_protector_death"
+			}
+		]
+	},
+	"entity.toadprotector.hurt": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_protector_hurt"
+			}
+		]
+	},
+	"entity.toadprotector.idle": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_protector_idle"
+			}
+		]
 	}
 }

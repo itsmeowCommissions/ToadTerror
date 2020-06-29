@@ -20,7 +20,9 @@ public class ToadTerrorClient {
 
     @SubscribeEvent
     public static void clientSetup(final FMLClientSetupEvent event) {
-        R.addRender(ModEntities.TOAD_SENTINEL.entityType, 1F, r -> r.tSingle("toad_sentinel").mSingle(new ToadSentinelModel<>()));
+        R.addRender(ModEntities.TOAD_SENTINEL.entityType, 1F, r -> r.tMapped(e -> {
+            return e.getHealth() > e.getMaxHealth() * 0.66F ? "toad_sentinel" : (e.getHealth() > e.getMaxHealth() * 0.33F ? "toad_sentinel_cracked_1" : "toad_sentinel_cracked_2");
+        }).mSingle(new ToadSentinelModel<>()));
         R.addRender(ModEntities.TOAD_PROTECTOR.entityType, 1F, r -> r.tSingle("toad_protector").mSingle(new ToadProtectorModel<>()));
     }
 

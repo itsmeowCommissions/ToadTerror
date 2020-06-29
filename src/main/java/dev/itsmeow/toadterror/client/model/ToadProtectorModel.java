@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import dev.itsmeow.toadterror.entity.ToadProtectorEntity;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.util.math.MathHelper;
 
 public class ToadProtectorModel<T extends ToadProtectorEntity> extends EntityModel<T> {
     public ModelRenderer BodyMain;
@@ -103,7 +104,28 @@ public class ToadProtectorModel<T extends ToadProtectorEntity> extends EntityMod
 
     @Override
     public void setRotationAngles(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-
+        this.Tail.rotateAngleY = MathHelper.sin(ageInTicks * 0.05F) * 0.1F;
+        this.Tail.rotateAngleX = MathHelper.sin(ageInTicks * 0.015F) * 0.1F;
+        this.Tail.rotateAngleY += MathHelper.sin(limbSwing * 0.25F) * 0.5F * limbSwingAmount;
+        if(limbSwingAmount > 0.2) {
+            float anim = Math.max((ageInTicks % 8F) - 3F, 0F);
+            float anim2 = Math.max(((ageInTicks + 2F) % 8F) - 3F, 0F);
+            this.BodyMain.rotationPointY = -anim + 15.5F;
+            this.FootLeft.rotateAngleX = MathHelper.sin(anim) * limbSwingAmount + 0.17453292519943295F;
+            this.FootRight.rotateAngleX = MathHelper.sin(anim) * limbSwingAmount + 0.17453292519943295F;
+            this.LegLeft.rotateAngleX = MathHelper.sin(anim) * limbSwingAmount;
+            this.LegRight.rotateAngleX = MathHelper.sin(anim) * limbSwingAmount;
+            this.ArmLeft.rotateAngleX = MathHelper.cos(anim2) * limbSwingAmount + 0.17453292519943295F;
+            this.ArmRight.rotateAngleX = MathHelper.cos(anim2) * limbSwingAmount + 0.17453292519943295F;
+        } else {
+            this.BodyMain.rotationPointY = 15.5F;
+            this.FootLeft.rotateAngleX = 0.17453292519943295F;
+            this.FootRight.rotateAngleX = 0.17453292519943295F;
+            this.LegLeft.rotateAngleX = 0F;
+            this.LegRight.rotateAngleX = 0F;
+            this.ArmLeft.rotateAngleX = 0.17453292519943295F;
+            this.ArmRight.rotateAngleX = 0.17453292519943295F;
+        }
     }
 
     public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {

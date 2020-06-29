@@ -4,14 +4,12 @@ import java.util.Optional;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.blaze3d.vertex.MatrixApplyingVertexBuilder;
 
 import dev.itsmeow.imdlib.client.util.RenderUtil;
 import dev.itsmeow.toadterror.entity.ToadSentinelEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -134,6 +132,7 @@ public class ToadSentinelModel<T extends ToadSentinelEntity> extends EntityModel
 
     @Override
     public void render(MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+        /*
         stack.push();
         {
             int k3 = (int) ((((200F - health) / 200F) * 10F) - 1F);
@@ -144,6 +143,7 @@ public class ToadSentinelModel<T extends ToadSentinelEntity> extends EntityModel
             }
         }
         stack.pop();
+         */
         this.Body.render(stack, bufferIn, packedLightIn, packedOverlayIn);
         if(Tongue.showModel && !Minecraft.getInstance().isGamePaused()) {
             stack.push();
