@@ -1,0 +1,8 @@
+{
+	"parent": "minecraft:block/slab",
+	"textures": {
+		"bottom": "toadterror:blocks/sacred_stone_bricks",
+		"top": "toadterror:blocks/sacred_stone_bricks",
+		"side": "toadterror:blocks/sacred_stone_bricks"
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "toadterror:chiseled_sacred_stone_bricks"
+  },
+  "result": "toadterror:chiseled_sacred_stone_brick_slab",
+  "count": 2
+}

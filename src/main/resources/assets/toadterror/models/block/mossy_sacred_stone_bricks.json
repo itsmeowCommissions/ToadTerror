@@ -1,0 +1,6 @@
+{
+	"parent": "minecraft:block/cube_all",
+	"textures": {
+		"all": "toadterror:blocks/mossy_sacred_stone_bricks"
+	}
+}

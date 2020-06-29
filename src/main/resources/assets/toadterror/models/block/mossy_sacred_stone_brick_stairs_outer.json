@@ -1,0 +1,8 @@
+{
+	"parent": "minecraft:block/outer_stairs",
+	"textures": {
+		"bottom": "toadterror:blocks/mossy_sacred_stone_bricks",
+		"top": "toadterror:blocks/mossy_sacred_stone_bricks",
+		"side": "toadterror:blocks/mossy_sacred_stone_bricks"
+	}
+}

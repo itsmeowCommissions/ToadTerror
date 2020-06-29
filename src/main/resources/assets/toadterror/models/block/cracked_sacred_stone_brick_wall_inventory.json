@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/wall_inventory",
+    "textures": {
+        "wall": "toadterror:blocks/cracked_sacred_stone_bricks"
+    }
+}

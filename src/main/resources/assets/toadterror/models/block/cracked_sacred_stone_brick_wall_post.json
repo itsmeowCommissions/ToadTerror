@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/template_wall_post",
+    "textures": {
+        "wall": "toadterror:blocks/cracked_sacred_stone_bricks"
+    }
+}

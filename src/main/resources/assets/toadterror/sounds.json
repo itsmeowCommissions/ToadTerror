@@ -1,0 +1,30 @@
+{
+	"entity.toadsentinel.ribbit": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_sentinel_ribbit"
+			}
+		]
+	},
+	"entity.toadsentinel.death": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_sentinel_death"
+			}
+		]
+	},
+	"entity.toadsentinel.hurt": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_sentinel_hurt"
+			}
+		]
+	},
+	"entity.toadsentinel.idle": {
+		"sounds": [
+			{
+				"name": "toadterror:toad_sentinel_idle"
+			}
+		]
+	}
+}

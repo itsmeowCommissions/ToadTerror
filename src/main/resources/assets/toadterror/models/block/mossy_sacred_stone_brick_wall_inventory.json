@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/wall_inventory",
+    "textures": {
+        "wall": "toadterror:blocks/mossy_sacred_stone_bricks"
+    }
+}

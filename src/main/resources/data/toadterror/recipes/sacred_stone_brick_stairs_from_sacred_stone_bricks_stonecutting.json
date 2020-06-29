@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "toadterror:sacred_stone_bricks"
+  },
+  "result": "toadterror:sacred_stone_brick_stairs",
+  "count": 1
+}

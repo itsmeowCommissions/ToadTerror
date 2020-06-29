@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "toadterror:sacred_stone_brick_wall",
+    "toadterror:mossy_sacred_stone_brick_wall",
+    "toadterror:cracked_sacred_stone_brick_wall",
+    "toadterror:chiseled_sacred_stone_brick_wall"
+  ]
+}

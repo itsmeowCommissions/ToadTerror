@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "#  ",
+    "## ",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "toadterror:cracked_sacred_stone_bricks"
+    }
+  },
+  "result": {
+    "item": "toadterror:cracked_sacred_stone_brick_stairs",
+    "count": 4
+  }
+}

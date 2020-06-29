@@ -1,17 +1,17 @@
 modLoader="javafml"
 loaderVersion="[31,)"
-issueTrackerURL="http://github.com/itsmeow/basemod/issues"
-displayURL="https://www.curseforge.com/minecraft/mc-mods/basemod"
-logoFile="icon.png"
-credits="itsmeow for Programming"
-authors="itsmeow"
+issueTrackerURL="http://github.com/itsmeowCommissions/ToadTerror/issues"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/toad-terror"
+logoFile="logo.png"
+credits="itsmeow for Programming, Proddy & Coda for art"
+authors="itsmeow, Coda, Proddy"
 [[mods]]
-modId="basemod"
+modId="toadterror"
 version="${file.jarVersion}"
-displayName="BaseMod"
+displayName="Toad Terror"
 description='''
-A base mod.'''
-[[dependencies.basemod]]
+Adds a toad boss, structure, and protector.'''
+[[dependencies.toadterror]]
     modId="forge"
     mandatory=true
     versionRange="[31.2.0,)"

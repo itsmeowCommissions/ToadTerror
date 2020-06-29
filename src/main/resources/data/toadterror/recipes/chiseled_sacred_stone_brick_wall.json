@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "item": "toadterror:chiseled_sacred_stone_bricks"
+    }
+  },
+  "result": {
+    "item": "toadterror:chiseled_sacred_stone_brick_wall",
+    "count": 6
+  }
+}
