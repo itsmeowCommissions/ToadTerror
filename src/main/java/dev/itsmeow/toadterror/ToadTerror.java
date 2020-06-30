@@ -46,6 +46,7 @@ import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ObjectHolder;
 import top.theillusivec4.curios.api.CuriosAPI;
 import top.theillusivec4.curios.api.capability.ICurioItemHandler;
@@ -86,10 +87,13 @@ public class ToadTerror {
     }
 
     @SubscribeEvent
-    public void setup(final FMLCommonSetupEvent event) {
+    public static void setup(final FMLCommonSetupEvent event) {
         DeferredWorkQueue.runLater(() -> {
             BiomeDictionary.getBiomes(Type.SWAMP).forEach((biome) -> {
                 biome.addStructure(SACRED_RUINS_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
+            });
+            // add to all biomes so it doesn't get cut off
+            ForgeRegistries.BIOMES.forEach((biome) -> {
                 biome.addFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, SACRED_RUINS_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
             });
         });
@@ -97,7 +101,7 @@ public class ToadTerror {
 
     @SubscribeEvent
     public static void interModEnqueue(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage(CURIO_ID).setSize(1).setEnabled(true).setHidden(false));
+        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage(CURIO_ID).setSize(3).setEnabled(true).setHidden(false));
         InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>(CURIO_ID, ModResources.CURIO_SLOT_ICON));
     }
 
@@ -196,7 +200,13 @@ public class ToadTerror {
                             if(!mouseHeld.isEmpty() && mouseHeld.getItem() == ModItems.EMPTY_TOAD_EYE && mouseHeld.hasTag() && mouseHeld.getTag().getString("uid").equals(emptyEye.getTag().getString("uid"))) {
                                 player.inventory.setItemStack(newStack);
                             } else {
-                                int slot = player.inventory.getSlotFor(emptyEye);
+                                int slot = -1;
+                                for(int i = 0; i < player.inventory.mainInventory.size(); ++i) {
+                                    ItemStack temp = player.inventory.mainInventory.get(i);
+                                    if(!player.inventory.mainInventory.get(i).isEmpty() && temp.getItem() == emptyEye.getItem() && ItemStack.areItemStackTagsEqual(emptyEye, temp)) {
+                                        slot = i;
+                                    }
+                                }
                                 if(slot != -1) {
                                     player.inventory.setInventorySlotContents(slot, newStack);
                                 }

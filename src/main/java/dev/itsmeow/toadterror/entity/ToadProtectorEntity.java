@@ -68,10 +68,14 @@ public class ToadProtectorEntity extends TameableEntity {
         this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
 
-
     @Override
     protected SoundEvent getAmbientSound() {
         return ModSoundEvents.TOAD_PROTECTOR_IDLE;
+    }
+
+    @Override
+    protected float getSoundVolume() {
+        return 0.7F;
     }
 
     @Override

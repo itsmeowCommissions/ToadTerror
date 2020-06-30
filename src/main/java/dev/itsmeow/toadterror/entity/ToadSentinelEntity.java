@@ -41,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerBossInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 
 public class ToadSentinelEntity extends CreatureEntity {
 
@@ -120,6 +121,19 @@ public class ToadSentinelEntity extends CreatureEntity {
         this.dataManager.register(TONGUE_TICKS, 0);
         this.dataManager.register(TARGET_POS, Optional.empty());
         this.dataManager.register(ATTACK_TICK, 0);
+    }
+
+    @Override
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if(source.damageType.equals("player")) {
+            if(source.getTrueSource() instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) source.getTrueSource();
+                if(player.getHeldItemMainhand().getToolTypes().contains(ToolType.PICKAXE)) {
+                    return super.attackEntityFrom(source, amount + (amount * 0.5F));
+                }
+            }
+        }
+        return super.attackEntityFrom(source, amount);
     }
 
     public void setTongueTicks(int tick) {

@@ -8,12 +8,13 @@ import dev.itsmeow.toadterror.client.model.ToadSentinelModel;
 import dev.itsmeow.toadterror.init.ModEntities;
 import dev.itsmeow.toadterror.init.ModResources;
 import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-@Mod.EventBusSubscriber(modid = ToadTerror.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = ToadTerror.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ToadTerrorClient {
 
     public static final RenderFactory R = IMDLibClient.getRenderRegistry(ToadTerror.MODID);

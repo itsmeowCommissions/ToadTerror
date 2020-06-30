@@ -17,3 +17,9 @@ Adds a toad boss, structure, and protector.'''
     versionRange="[31.2.0,)"
     ordering="NONE"
     side="BOTH"
+[[dependencies.toadterror]]
+    modId="curios"
+    mandatory=true
+    versionRange="FORGE-1.15.2-[2.0,)"
+    ordering="NONE"
+    side="BOTH"

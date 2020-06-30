@@ -25,5 +25,6 @@
     "curios.identifier.toad_eye_holder": "Toad Eye Holder",
     "tooltip.toadterror.nolocate": "Could not locate Toad Protector. This will be useless until added again with the Toad Protector loaded.",
     "tooltip.toadterror.located": "Contains Toad Protector",
+    "tooltip.toadterror.health": "Health: %s",
     "entity.toadterror.toad_protector": "Toad Protector"
 }

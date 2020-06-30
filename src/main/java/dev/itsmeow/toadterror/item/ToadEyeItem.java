@@ -18,6 +18,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.Constants;
 
 public class ToadEyeItem extends ModItem {
 
@@ -34,6 +35,13 @@ public class ToadEyeItem extends ModItem {
                     tooltip.add(new TranslationTextComponent("tooltip.toadterror.nolocate").setStyle(new Style().setColor(TextFormatting.RED)));
                 } else if(stack.getItem() == ModItems.TOAD_EYE) {
                     tooltip.add(new TranslationTextComponent("tooltip.toadterror.located").setStyle(new Style().setColor(TextFormatting.GREEN)));
+                    if(stack.getTag().contains("Health", Constants.NBT.TAG_FLOAT)) {
+                        tooltip.add(
+                        new TranslationTextComponent("tooltip.toadterror.health",
+                        new StringTextComponent("" + stack.getTag().getFloat("Health"))
+                        .setStyle(new Style().setColor(TextFormatting.GRAY)))
+                        .setStyle(new Style().setColor(TextFormatting.GREEN)));
+                    }
                 }
                 if(flagIn == ITooltipFlag.TooltipFlags.ADVANCED) {
                     tooltip.add(new StringTextComponent("UUID: " + stack.getTag().getString("uid")).setStyle(new Style().setColor(TextFormatting.DARK_GRAY)));
