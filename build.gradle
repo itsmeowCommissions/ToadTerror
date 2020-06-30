@@ -19,7 +19,6 @@ apply plugin: 'eclipse'
 version = "${project.mc_version}-${project.mod_version}"
 group = "${project.maven_group}"
 archivesBaseName = "${project.mod_id}"
-def at_name = project.hasProperty('at_name') ? "${project.at_name}" : ""
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
@@ -36,15 +35,8 @@ repositories {
         url = "https://maven.theillusivec4.top/"
     }
 }
-dependencies { 
-    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-${curios_version}")
-    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-${curios_version}:api")
-}
 minecraft {
     mappings channel: project.mappings_channel, version: "${project.mappings_version}-${project.mappings_mc_version}"
-    if (project.hasProperty('at_file')) {
-        accessTransformer = file("src/main/resources/META-INF/${at_file}.cfg")
-    }
     runs {
         client {
             workingDirectory project.file('run')
@@ -60,6 +52,8 @@ minecraft {
 }
 dependencies {
     minecraft "net.minecraftforge:forge:${project.mc_version}-${project.forge_version}"
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-${curios_version}")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios:FORGE-${curios_version}:api")
 }
 jar {
     manifest {
@@ -96,6 +90,7 @@ task sourceJar(type: Jar, dependsOn: classes) {
         )
     }
 }
+apply from: 'https://maven.itsmeow.dev/scripts/maven.gradle'
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 processResources {

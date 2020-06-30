@@ -17,8 +17,11 @@ jobs:
    - name: "Build with Gradle"
      id: build
      env:
+       MAVEN_PASSWORD: "${{secrets.MAVEN_PASSWORD}}"
+       MAVEN_URL: "${{secrets.MAVEN_URL}}"
+       MAVEN_USER: "${{secrets.MAVEN_USER}}"
        USE_ALPHAS: false
-     run: "./gradlew setupGithubActions build"
+     run: "./gradlew setupGithubActions build publish"
    - name: "Create a Release"
      id: create_release
      uses: meeDamian/github-release@v1.0.1
@@ -32,7 +35,8 @@ jobs:
    - name: "CF upload"
      uses: itsmeow/curseforge-upload@master
      with:
-        changelog: "Changelog not added yet..."
+        changelog: "No changes"
+        changelog_type: "html"
         display_name: "${{ steps.build.outputs.curse_title }}"
         file_path: "build/libs/${{ steps.build.outputs.modid }}-${{ steps.build.outputs.version }}.jar"
         game_endpoint: minecraft
