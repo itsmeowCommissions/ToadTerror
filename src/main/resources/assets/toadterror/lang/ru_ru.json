@@ -1,0 +1,37 @@
+{ 
+  "itemGroup.toadterror":"Toad Terror",
+
+  "misc.toadterror.eggorder":"Яйцо призыва %s",
+
+  "entity.toadterror.toad_sentinel":"Жаба-страж",
+  "entity.toadterror.toad_protector":"Жаба-защитник",
+
+  "item.toadterror.broken_toad_eye":"Сломанный глаз жабы-стража",
+  "item.toadterror.empty_toad_eye":"Пустой глаз жабы-стража",
+  "item.toadterror.toad_eye":"Глаз жабы-стража",
+  "item.toadterror.toad_chops":"Жабья отбивная",
+
+  "block.toadterror.sacred_stone_bricks":"Заветные каменные кирпичи",
+  "block.toadterror.sacred_stone_brick_stairs":"Заветные ступеньки из каменного кирпича",
+  "block.toadterror.sacred_stone_brick_slab":"Заветная плита из каменного кирпича",
+  "block.toadterror.sacred_stone_brick_wall":"Заветная ограда из каменного кирпича",
+  "block.toadterror.mossy_sacred_stone_bricks":"Замшелые заветные каменные кирпичи",
+  "block.toadterror.mossy_sacred_stone_brick_stairs":"Замшелые заветные ступеньки из каменного кирпича",
+  "block.toadterror.mossy_sacred_stone_brick_slab":"Замшелая заветная плита из каменного кирпича",
+  "block.toadterror.mossy_sacred_stone_brick_wall":"Замшелая заветная ограда из каменного кирпича",
+  "block.toadterror.chiseled_sacred_stone_bricks":"Резные заветные каменные кирпичи",
+  "block.toadterror.chiseled_sacred_stone_brick_stairs":"Резные заветные ступеньки из каменного кирпича",
+  "block.toadterror.chiseled_sacred_stone_brick_slab":"Резная заветная плита из каменного кирпича",
+  "block.toadterror.chiseled_sacred_stone_brick_wall":"Резная заветная ограда из каменного кирпича",
+  "block.toadterror.cracked_sacred_stone_bricks":"Потрескавшийся заветные каменные кирпичи",
+  "block.toadterror.cracked_sacred_stone_brick_stairs":"Потрескавшийся заветные ступеньки из каменного кирпича",
+  "block.toadterror.cracked_sacred_stone_brick_slab":"Потрескавшаяся заветная плита из каменного кирпича",
+  "block.toadterror.cracked_sacred_stone_brick_wall":"Потрескавшаяся заветная ограда из каменного кирпича",
+
+  "curios.identifier.toad_eye_holder":"Слот для жабьего глаза",
+
+  "tooltip.toadterror.nolocate":"Не удалось найти жабу-защитника. Это будет бесполезно, пока вы снова не добавите уже загруженного жабу-защитника.",
+  "tooltip.toadterror.located":"Содержит жабу-защитника",
+  "tooltip.toadterror.health":"Здоровье: %s"
+
+}
