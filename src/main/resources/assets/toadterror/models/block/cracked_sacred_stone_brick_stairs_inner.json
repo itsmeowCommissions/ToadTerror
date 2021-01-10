@@ -1,8 +1,0 @@
-{
-	"parent": "minecraft:block/inner_stairs",
-	"textures": {
-		"bottom": "toadterror:blocks/cracked_sacred_stone_bricks",
-		"top": "toadterror:blocks/cracked_sacred_stone_bricks",
-		"side": "toadterror:blocks/cracked_sacred_stone_bricks"
-	}
-}

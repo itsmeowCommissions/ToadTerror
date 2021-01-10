@@ -8,11 +8,11 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import dev.itsmeow.imdlib.client.util.RenderUtil;
 import dev.itsmeow.toadterror.entity.ToadSentinelEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 
 public class ToadSentinelModel<T extends ToadSentinelEntity> extends EntityModel<T> {
     public ModelRenderer Body;

@@ -1,7 +1,0 @@
-{
-    "variants": {
-        "type=bottom": { "model": "toadterror:block/cracked_sacred_stone_brick_slab" },
-        "type=top": { "model": "toadterror:block/cracked_sacred_stone_brick_slab_top" },
-        "type=double": { "model": "toadterror:block/cracked_sacred_stone_bricks" }
-    }
-}

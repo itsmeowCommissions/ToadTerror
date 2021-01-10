@@ -11,7 +11,6 @@ import dev.itsmeow.toadterror.init.ModItems;
 import dev.itsmeow.toadterror.init.ModResources;
 import dev.itsmeow.toadterror.init.ModSoundEvents;
 import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.FollowOwnerGoal;
 import net.minecraft.entity.ai.goal.LeapAtTargetGoal;
 import net.minecraft.entity.ai.goal.LookAtGoal;
@@ -29,16 +28,21 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.FolderName;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.capability.ICurioItemHandler;
-import top.theillusivec4.curios.api.inventory.CurioStackHandler;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
+
+import javax.annotation.Nullable;
 
 public class ToadProtectorEntity extends TameableEntity {
 
@@ -57,15 +61,6 @@ public class ToadProtectorEntity extends TameableEntity {
         this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
         this.targetSelector.addGoal(1, new OwnerHurtByTargetGoal(this));
         this.targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-    }
-
-    @Override
-    protected void registerAttributes() {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2D);
     }
 
     @Override
@@ -89,20 +84,21 @@ public class ToadProtectorEntity extends TameableEntity {
     }
 
     @Override
-    public boolean processInteract(PlayerEntity player, Hand hand) {
+    public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
         if(ModResources.Tags.Items.SACRED_STONE_BRICKS.contains(player.getHeldItem(hand).getItem())) {
             this.consumeItemFromStack(player, player.getHeldItem(hand));
             this.setHealth(this.getMaxHealth());
             for(int i = 0; i < 10; i++) {
                 this.world.addParticle(ParticleTypes.HAPPY_VILLAGER, this.getPosX() + Math.random() * 2F - 1F, this.getPosY() + 1F, this.getPosZ() + Math.random() * 2F - 1F, 0, 0, 0);
             }
-            return true;
+            return ActionResultType.CONSUME;
         }
-        return super.processInteract(player, hand);
+        return super.func_230254_b_(player, hand);
     }
 
+    @Nullable
     @Override
-    public AgeableEntity createChild(AgeableEntity ageable) {
+    public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
         return null;
     }
 
@@ -113,11 +109,11 @@ public class ToadProtectorEntity extends TameableEntity {
         if(this.getServer() != null) {
             ServerPlayerEntity owner = this.getServer().getPlayerList().getPlayerByUUID(ownerID);
             if(owner != null) {
-                LazyOptional<ICurioItemHandler> handler = CuriosAPI.getCuriosHandler(owner);
+                LazyOptional<ICuriosItemHandler> handler = CuriosApi.getCuriosHelper().getCuriosHandler(owner);
                 handler.ifPresent(h -> {
-                    CurioStackHandler sH = h.getStackHandler(ToadTerror.CURIO_ID);
+                    ICurioStacksHandler sH = h.getStacksHandler(ToadTerror.CURIO_ID).get();
                     for(int slot = 0; slot < sH.getSlots(); slot++) {
-                        ItemStack content = sH.getStackInSlot(slot);
+                        ItemStack content = sH.getStacks().getStackInSlot(slot);
                         if(content.getItem() == ModItems.EMPTY_TOAD_EYE && content.hasTag() && content.getTag().contains("uid")) {
                             UUID uid = UUID.fromString(content.getTag().getString("uid"));
                             if(uid.equals(this.getUniqueID())) {
@@ -125,7 +121,7 @@ public class ToadProtectorEntity extends TameableEntity {
                                 ItemStack newStack = new ItemStack(ModItems.BROKEN_TOAD_EYE);
                                 data.putString("uid", uid.toString());
                                 newStack.setTag(data);
-                                sH.setStackInSlot(slot, newStack);
+                                sH.getStacks().setStackInSlot(slot, newStack);
                                 super.onDeath(cause);
                                 return;
                             }
@@ -135,7 +131,7 @@ public class ToadProtectorEntity extends TameableEntity {
             } else {
                 // offline... work time!
                 try {
-                    File playerFile = new File(this.getServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getPlayerFolder(), ownerID.toString() + ".dat");
+                    File playerFile = new File(this.getServer().func_240776_a_(FolderName.PLAYERDATA).toFile(), ownerID.toString() + ".dat");
                     if(playerFile.exists() && playerFile.isFile()) {
                         FileInputStream in = new FileInputStream(playerFile);
                         CompoundNBT tag = CompressedStreamTools.readCompressed(in);
@@ -150,29 +146,37 @@ public class ToadProtectorEntity extends TameableEntity {
                                         for(int j = 0; j < listIden.size(); j++) {
                                             CompoundNBT iden = listIden.getCompound(j);
                                             if(iden.contains("Identifier") && iden.getString("Identifier").equals(ToadTerror.CURIO_ID)) {
-                                                ListNBT itemList = iden.getList("Items", Constants.NBT.TAG_COMPOUND);
-                                                for(int i = 0; i < itemList.size(); i++) {
-                                                    CompoundNBT itemTag = itemList.getCompound(i);
-                                                    if(itemTag.contains("id") && itemTag.getString("id").equals(ModItems.EMPTY_TOAD_EYE.getRegistryName().toString())) {
-                                                        if(itemTag.contains("tag") && itemTag.getCompound("tag").contains("uid")) {
-                                                            if(itemTag.getCompound("tag").getString("uid").equals(this.getUniqueID().toString())) {
-                                                                // MATCH!
-                                                                ItemStack newStack = new ItemStack(ModItems.BROKEN_TOAD_EYE);
-                                                                data.putString("uid", this.getUniqueID().toString());
-                                                                newStack.setTag(data);
-                                                                CompoundNBT newDat = newStack.serializeNBT();
-                                                                newDat.putInt("Slot", itemTag.getInt("Slot"));
-                                                                itemList.set(i, newDat);
-                                                                iden.put("Items", itemList);
-                                                                listIden.set(j, iden);
-                                                                curiosInv.put("Curios", listIden);
-                                                                forgeCaps.put("curios:inventory", curiosInv);
-                                                                tag.put("ForgeCaps", forgeCaps);
-                                                                FileOutputStream out = new FileOutputStream(playerFile);
-                                                                CompressedStreamTools.writeCompressed(tag, out);
-                                                                out.close();
-                                                                super.onDeath(cause);
-                                                                return;
+                                                if(iden.contains("StacksHandler")) {
+                                                    CompoundNBT sH = iden.getCompound("StacksHandler");
+                                                    if(sH.contains("Stacks")) {
+                                                        CompoundNBT stacks = sH.getCompound("Stacks");
+                                                        ListNBT itemList = stacks.getList("Items", Constants.NBT.TAG_COMPOUND);
+                                                        for (int i = 0; i < itemList.size(); i++) {
+                                                            CompoundNBT itemTag = itemList.getCompound(i);
+                                                            if (itemTag.contains("id") && itemTag.getString("id").equals(ModItems.EMPTY_TOAD_EYE.getRegistryName().toString())) {
+                                                                if (itemTag.contains("tag") && itemTag.getCompound("tag").contains("uid")) {
+                                                                    if (itemTag.getCompound("tag").getString("uid").equals(this.getUniqueID().toString())) {
+                                                                        // MATCH!
+                                                                        ItemStack newStack = new ItemStack(ModItems.BROKEN_TOAD_EYE);
+                                                                        data.putString("uid", this.getUniqueID().toString());
+                                                                        newStack.setTag(data);
+                                                                        CompoundNBT newDat = newStack.serializeNBT();
+                                                                        newDat.putInt("Slot", itemTag.getInt("Slot"));
+                                                                        itemList.set(i, newDat);
+                                                                        stacks.put("Items", itemList);
+                                                                        sH.put("Stacks", stacks);
+                                                                        iden.put("StacksHandler", sH);
+                                                                        listIden.set(j, iden);
+                                                                        curiosInv.put("Curios", listIden);
+                                                                        forgeCaps.put("curios:inventory", curiosInv);
+                                                                        tag.put("ForgeCaps", forgeCaps);
+                                                                        FileOutputStream out = new FileOutputStream(playerFile);
+                                                                        CompressedStreamTools.writeCompressed(tag, out);
+                                                                        out.close();
+                                                                        super.onDeath(cause);
+                                                                        return;
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     }

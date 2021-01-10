@@ -32,21 +32,20 @@ public class ToadEyeItem extends ModItem {
         if(stack.hasTag()) {
             if(stack.getTag().contains("uid")) {
                 if(stack.getTag().contains("noLocate") && stack.getItem() == ModItems.EMPTY_TOAD_EYE) {
-                    tooltip.add(new TranslationTextComponent("tooltip.toadterror.nolocate").setStyle(new Style().setColor(TextFormatting.RED)));
+                    tooltip.add(new TranslationTextComponent("tooltip.toadterror.nolocate").mergeStyle(TextFormatting.RED));
                 } else if(stack.getItem() == ModItems.TOAD_EYE) {
-                    tooltip.add(new TranslationTextComponent("tooltip.toadterror.located").setStyle(new Style().setColor(TextFormatting.GREEN)));
+                    tooltip.add(new TranslationTextComponent("tooltip.toadterror.located").mergeStyle(TextFormatting.GREEN));
                     if(stack.getTag().contains("Health", Constants.NBT.TAG_FLOAT)) {
                         tooltip.add(
                         new TranslationTextComponent("tooltip.toadterror.health",
-                        new StringTextComponent("" + stack.getTag().getFloat("Health"))
-                        .setStyle(new Style().setColor(TextFormatting.GRAY)))
-                        .setStyle(new Style().setColor(TextFormatting.GREEN)));
+                        new StringTextComponent("" + stack.getTag().getFloat("Health")).mergeStyle(TextFormatting.GRAY))
+                        .mergeStyle(TextFormatting.GREEN));
                     }
                 }
                 if(flagIn == ITooltipFlag.TooltipFlags.ADVANCED) {
-                    tooltip.add(new StringTextComponent("UUID: " + stack.getTag().getString("uid")).setStyle(new Style().setColor(TextFormatting.DARK_GRAY)));
+                    tooltip.add(new StringTextComponent("UUID: " + stack.getTag().getString("uid")).mergeStyle(TextFormatting.DARK_GRAY));
                     if(Screen.hasAltDown()) {
-                        tooltip.add(new StringTextComponent(stack.getTag().toString()).setStyle(new Style().setColor(TextFormatting.GRAY)));
+                        tooltip.add(new StringTextComponent(stack.getTag().toString()).mergeStyle(TextFormatting.GRAY));
                     }
                 }
             }

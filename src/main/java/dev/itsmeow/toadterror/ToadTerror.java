@@ -1,19 +1,13 @@
 package dev.itsmeow.toadterror;
 
-import java.util.UUID;
-
 import dev.itsmeow.imdlib.entity.util.EntityTypeContainer;
 import dev.itsmeow.toadterror.entity.ToadProtectorEntity;
-import dev.itsmeow.toadterror.gen.SacredRuinsStructure;
-import dev.itsmeow.toadterror.init.ModBlocks;
-import dev.itsmeow.toadterror.init.ModEntities;
-import dev.itsmeow.toadterror.init.ModItems;
-import dev.itsmeow.toadterror.init.ModResources;
-import dev.itsmeow.toadterror.init.ModSoundEvents;
+import dev.itsmeow.toadterror.init.*;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -23,38 +17,26 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.feature.structure.IStructurePieceType;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.placement.IPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
-import top.theillusivec4.curios.api.CuriosAPI;
-import top.theillusivec4.curios.api.capability.ICurioItemHandler;
-import top.theillusivec4.curios.api.event.LivingCurioChangeEvent;
-import top.theillusivec4.curios.api.event.LivingCurioDropsEvent;
-import top.theillusivec4.curios.api.imc.CurioIMCMessage;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.SlotTypeMessage;
+import top.theillusivec4.curios.api.event.CurioChangeEvent;
+import top.theillusivec4.curios.api.event.CurioDropsEvent;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
-@SuppressWarnings("deprecation")
+import java.util.UUID;
+
 @Mod.EventBusSubscriber(modid = ToadTerror.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 @Mod(value = ToadTerror.MODID)
 public class ToadTerror {
@@ -62,9 +44,6 @@ public class ToadTerror {
     public static final String MODID = "toadterror";
     public static final String CURIO_ID = "toad_eye_holder";
     public static ItemGroup ITEM_GROUP;
-    public static IStructurePieceType RUINS_PIECE_TYPE = null;
-    @ObjectHolder(MODID + ":sacred_ruins")
-    public static Structure<NoFeatureConfig> SACRED_RUINS_STRUCTURE;
 
     public ToadTerror() {
         ITEM_GROUP = new ItemGroup(MODID) {
@@ -84,31 +63,13 @@ public class ToadTerror {
                 }
             }
         };
-    }
-
-    @SubscribeEvent
-    public static void setup(final FMLCommonSetupEvent event) {
-        DeferredWorkQueue.runLater(() -> {
-            BiomeDictionary.getBiomes(Type.SWAMP).forEach((biome) -> {
-                biome.addStructure(SACRED_RUINS_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG));
-            });
-            // add to all biomes so it doesn't get cut off
-            ForgeRegistries.BIOMES.forEach((biome) -> {
-                biome.addFeature(GenerationStage.Decoration.SURFACE_STRUCTURES, SACRED_RUINS_STRUCTURE.withConfiguration(IFeatureConfig.NO_FEATURE_CONFIG).withPlacement(Placement.NOPE.configure(IPlacementConfig.NO_PLACEMENT_CONFIG)));
-            });
-        });
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModWorldGen.subscribe(modBus);
     }
 
     @SubscribeEvent
     public static void interModEnqueue(final InterModEnqueueEvent event) {
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE, () -> new CurioIMCMessage(CURIO_ID).setSize(3).setEnabled(true).setHidden(false));
-        InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_ICON, () -> new Tuple<>(CURIO_ID, ModResources.CURIO_SLOT_ICON));
-    }
-
-    @SubscribeEvent
-    public static void registerFeatures(RegistryEvent.Register<Feature<?>> event) {
-        RUINS_PIECE_TYPE = Registry.register(Registry.STRUCTURE_PIECE, ModResources.SACRED_RUINS_STRUCTURE, SacredRuinsStructure.Piece::new);
-        event.getRegistry().register(new SacredRuinsStructure(NoFeatureConfig::deserialize).setRegistryName(ModResources.SACRED_RUINS_STRUCTURE));
+        InterModComms.sendTo(CuriosApi.MODID, SlotTypeMessage.REGISTER_TYPE, () -> new SlotTypeMessage.Builder(CURIO_ID).size(3).icon(ModResources.CURIO_SLOT_ICON).build());
     }
 
     @SubscribeEvent
@@ -135,7 +96,10 @@ public class ToadTerror {
 
     @SubscribeEvent
     public static void registerEntities(final RegistryEvent.Register<EntityType<?>> event) {
-        ModEntities.H.ENTITIES.values().forEach(e -> event.getRegistry().register(e.entityType));
+        ModEntities.H.ENTITIES.values().forEach(e -> {
+            event.getRegistry().register(e.entityType);
+            e.registerAttributes();
+        });
     }
 
     @SubscribeEvent
@@ -171,24 +135,26 @@ public class ToadTerror {
         }
 
         @SubscribeEvent
-        public static void onCurioSlotChanged(final LivingCurioChangeEvent event) {
+        public static void onCurioSlotChanged(final CurioChangeEvent event) {
             if(event.getEntityLiving() instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-                if(event.getTypeIdentifier().equals(CURIO_ID)) {
+                if(event.getIdentifier().equals(CURIO_ID)) {
                     ItemStack emptyEye = event.getFrom().copy();
                     if(event.getTo().getItem() == ModItems.TOAD_EYE) {
-                        LazyOptional<ICurioItemHandler> handler = CuriosAPI.getCuriosHandler(player);
+                        LazyOptional<ICuriosItemHandler> handler = CuriosApi.getCuriosHelper().getCuriosHandler(player);
                         handler.ifPresent(h -> {
-                            ItemStack toadEye = event.getTo();
-                            ItemStack newEye = new ItemStack(ModItems.EMPTY_TOAD_EYE);
-                            CompoundNBT newTag = new CompoundNBT();
-                            if(!toadEye.hasTag() || !toadEye.getTag().contains("uid")) {
-                                newTag.putString("uid", createNewEntity(player).toString());
-                            } else {
-                                newTag.putString("uid", createEntityFromEye(player, toadEye.getTag()).toString());
-                            }
-                            newEye.setTag(newTag);
-                            h.setStackInSlot(CURIO_ID, event.getSlotIndex(), newEye);
+                            h.getStacksHandler(ToadTerror.CURIO_ID).ifPresent(sH -> {
+                                ItemStack toadEye = event.getTo();
+                                ItemStack newEye = new ItemStack(ModItems.EMPTY_TOAD_EYE);
+                                CompoundNBT newTag = new CompoundNBT();
+                                if(!toadEye.hasTag() || !toadEye.getTag().contains("uid")) {
+                                    newTag.putString("uid", createNewEntity(player).toString());
+                                } else {
+                                    newTag.putString("uid", createEntityFromEye(player, toadEye.getTag()).toString());
+                                }
+                                newEye.setTag(newTag);
+                                sH.getStacks().setStackInSlot(event.getSlotIndex(), newEye);
+                            });
                         });
                     }
                     if(event.getFrom().getItem() == ModItems.EMPTY_TOAD_EYE) {
@@ -218,22 +184,24 @@ public class ToadTerror {
                             if(player.world instanceof ServerWorld) {
                                 ServerWorld world = (ServerWorld) player.world;
                                 Entity ent = world.getEntityByUuid(UUID.fromString(event.getTo().getTag().getString("uid")));
-                                LazyOptional<ICurioItemHandler> handler = CuriosAPI.getCuriosHandler(player);
+                                LazyOptional<ICuriosItemHandler> handler = CuriosApi.getCuriosHelper().getCuriosHandler(player);
                                 if(ent != null && ent instanceof ToadProtectorEntity) {
                                     handler.ifPresent(h -> {
-                                        ItemStack toadEye = event.getTo();
-                                        ItemStack newEye = new ItemStack(ModItems.EMPTY_TOAD_EYE);
-                                        CompoundNBT newTag = new CompoundNBT();
-                                        newTag.putString("uid", createEntityFromEye(player, toadEye.getTag()).toString());
-                                        newEye.setTag(newTag);
-                                        h.setStackInSlot(CURIO_ID, event.getSlotIndex(), newEye);
+                                        h.getStacksHandler(ToadTerror.CURIO_ID).ifPresent(sH -> {
+                                            ItemStack toadEye = event.getTo();
+                                            ItemStack newEye = new ItemStack(ModItems.EMPTY_TOAD_EYE);
+                                            CompoundNBT newTag = new CompoundNBT();
+                                            newTag.putString("uid", createEntityFromEye(player, toadEye.getTag()).toString());
+                                            newEye.setTag(newTag);
+                                            sH.getStacks().setStackInSlot(event.getSlotIndex(), newEye);
+                                        });
                                     });
                                 } else {
                                     if(!player.inventory.addItemStackToInventory(event.getTo())) {
                                         player.dropItem(event.getTo(), false);
                                     }
                                     handler.ifPresent(h -> {
-                                        h.setStackInSlot(CURIO_ID, event.getSlotIndex(), ItemStack.EMPTY);
+                                        h.getStacksHandler(ToadTerror.CURIO_ID).ifPresent(sH -> sH.getStacks().setStackInSlot(event.getSlotIndex(), ItemStack.EMPTY));
                                     });
                                 }
                             }
@@ -244,7 +212,7 @@ public class ToadTerror {
         }
 
         @SubscribeEvent
-        public static void onCuriosDeath(LivingCurioDropsEvent event) {
+        public static void onCuriosDeath(CurioDropsEvent event) {
             if(event.getEntityLiving() instanceof PlayerEntity) {
                 event.getDrops().forEach(e -> updateItemEntity((PlayerEntity) event.getEntityLiving(), e));
             }
@@ -287,7 +255,7 @@ public class ToadTerror {
             prot.setMotion(0, 0, 0);
             prot.setUniqueId(id);
             prot.fallDistance = 0F;
-            prot.setFireTimer(0);
+            prot.setFire(0);
             // stop dying
             if(prot.getHealth() <= 0F || !prot.isAlive() || prot.deathTime > 0) {
                 prot.revive();

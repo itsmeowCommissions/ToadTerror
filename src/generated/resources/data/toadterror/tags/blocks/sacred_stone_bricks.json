@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "toadterror:cracked_sacred_stone_bricks",
+    "toadterror:cracked_sacred_stone_brick_stairs",
+    "toadterror:cracked_sacred_stone_brick_slab",
+    "toadterror:cracked_sacred_stone_brick_wall",
+    "toadterror:chiseled_sacred_stone_bricks",
+    "toadterror:chiseled_sacred_stone_brick_stairs",
+    "toadterror:chiseled_sacred_stone_brick_slab",
+    "toadterror:chiseled_sacred_stone_brick_wall",
+    "toadterror:sacred_stone_bricks",
+    "toadterror:sacred_stone_brick_stairs",
+    "toadterror:sacred_stone_brick_slab",
+    "toadterror:sacred_stone_brick_wall",
+    "toadterror:mossy_sacred_stone_bricks",
+    "toadterror:mossy_sacred_stone_brick_stairs",
+    "toadterror:mossy_sacred_stone_brick_slab",
+    "toadterror:mossy_sacred_stone_brick_wall"
+  ]
+}

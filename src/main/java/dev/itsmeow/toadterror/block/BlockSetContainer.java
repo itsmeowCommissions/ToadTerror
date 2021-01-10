@@ -5,6 +5,7 @@ import dev.itsmeow.toadterror.item.ModBlockItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 
 public class BlockSetContainer {
 
@@ -16,8 +17,10 @@ public class BlockSetContainer {
     protected final BlockItem stairs_item;
     protected final BlockItem slab_item;
     protected final BlockItem wall_item;
+    private ResourceLocation texture;
 
     public BlockSetContainer(String baseName, Block.Properties baseProps) {
+        texture = new ResourceLocation(ToadTerror.MODID, "block/" + baseName + "s");
         this.brick = new ModBlock(baseName + "s", baseProps);
         this.stairs = new ModStairs(baseName + "_stairs", baseProps, brick::getDefaultState);
         this.slab = new ModSlab(baseName + "_slab", baseProps);
@@ -27,6 +30,10 @@ public class BlockSetContainer {
         this.stairs_item = new ModBlockItem(stairs, prop);
         this.slab_item = new ModBlockItem(slab, prop);
         this.wall_item = new ModBlockItem(wall, prop);
+    }
+
+    public ResourceLocation getTexture() {
+        return texture;
     }
 
     public Block[] getAll() {

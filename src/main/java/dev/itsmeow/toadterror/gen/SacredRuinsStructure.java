@@ -1,15 +1,10 @@
 package dev.itsmeow.toadterror.gen;
 
-import java.util.List;
-import java.util.Random;
-import java.util.function.Function;
-
-import com.mojang.datafixers.Dynamic;
-
+import com.mojang.serialization.Codec;
 import dev.itsmeow.toadterror.ToadTerror;
 import dev.itsmeow.toadterror.entity.ToadSentinelEntity;
 import dev.itsmeow.toadterror.init.ModEntities;
-import dev.itsmeow.toadterror.init.ModResources;
+import dev.itsmeow.toadterror.init.ModWorldGen;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,95 +15,59 @@ import net.minecraft.util.SharedSeedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.world.IWorld;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.world.ISeedReader;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeManager;
+import net.minecraft.world.biome.provider.BiomeProvider;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
-import net.minecraft.world.gen.feature.structure.ScatteredStructure;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructurePiece;
-import net.minecraft.world.gen.feature.structure.StructureStart;
-import net.minecraft.world.gen.feature.structure.TemplateStructurePiece;
+import net.minecraft.world.gen.feature.structure.*;
 import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 
-public class SacredRuinsStructure extends ScatteredStructure<NoFeatureConfig> {
+import java.util.List;
+import java.util.Random;
 
-    public SacredRuinsStructure(Function<Dynamic<?>, ? extends NoFeatureConfig> configFactoryIn) {
-        super(configFactoryIn);
+public class SacredRuinsStructure extends Structure<NoFeatureConfig> {
+
+    public SacredRuinsStructure(String s, Codec<NoFeatureConfig> codec) {
+        super(codec);
+        Structure.NAME_STRUCTURE_BIMAP.put(s, this);
     }
 
     @Override
-    protected int getSeedModifier() {
-        return 801395783;
+    public GenerationStage.Decoration getDecorationStage() {
+        return GenerationStage.Decoration.SURFACE_STRUCTURES;
     }
 
     @Override
-    public IStartFactory getStartFactory() {
+    public IStartFactory<NoFeatureConfig> getStartFactory() {
         return SacredRuinsStructure.Start::new;
     }
 
     @Override
-    public String getStructureName() {
-        return ModResources.SACRED_RUINS_STRUCTURE.toString();
+    protected boolean func_230363_a_(ChunkGenerator chunkGen, BiomeProvider biomeSource, long seed, SharedSeedRandom rand, int chunkPosX, int chunkPosZ, Biome biome, ChunkPos chunkPos, NoFeatureConfig featureConfig) {
+        return chunkPosX > 4 && chunkPosZ > 4;
     }
 
-    @Override
-    public int getSize() {
-        return 1;
-    }
+    public static class Start extends StructureStart<NoFeatureConfig> {
 
-    @Override
-    protected ChunkPos getStartPositionForPosition(ChunkGenerator<?> chunkGenerator, Random random, int x, int z, int spacingOffsetsX, int spacingOffsetsZ) {
-        int minDistance = 35;
-        int maxDistance = 40;
-
-        int xTemp = x + maxDistance * spacingOffsetsX;
-        int ztemp = z + maxDistance * spacingOffsetsZ;
-        int xTemp2 = xTemp < 0 ? xTemp - maxDistance + 1 : xTemp;
-        int zTemp2 = ztemp < 0 ? ztemp - maxDistance + 1 : ztemp;
-        int validChunkX = xTemp2 / maxDistance;
-        int validChunkZ = zTemp2 / maxDistance;
-
-        ((SharedSeedRandom) random).setLargeFeatureSeedWithSalt(chunkGenerator.getSeed(), validChunkX, validChunkZ, this.getSeedModifier());
-        validChunkX = validChunkX * maxDistance;
-        validChunkZ = validChunkZ * maxDistance;
-        validChunkX = validChunkX + random.nextInt(maxDistance - minDistance);
-        validChunkZ = validChunkZ + random.nextInt(maxDistance - minDistance);
-
-        return new ChunkPos(validChunkX, validChunkZ);
-    }
-
-    @Override
-    public boolean canBeGenerated(BiomeManager p_225558_1_, ChunkGenerator<?> chunkGen, Random rand, int chunkPosX, int chunkPosZ, Biome biome) {
-        ChunkPos chunkpos = this.getStartPositionForPosition(chunkGen, rand, chunkPosX, chunkPosZ, 0, 0);
-        if(chunkPosX == chunkpos.x && chunkPosZ == chunkpos.z) {
-            if(chunkGen.hasStructure(biome, this)) {
-                if(chunkPosX > 4 && chunkPosZ > 4) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static class Start extends StructureStart {
-
-        public Start(Structure<?> structureIn, int chunkX, int chunkZ, MutableBoundingBox mutableBoundingBox, int referenceIn, long seedIn) {
+        public Start(Structure<NoFeatureConfig> structureIn, int chunkX, int chunkZ, MutableBoundingBox mutableBoundingBox, int referenceIn, long seedIn) {
             super(structureIn, chunkX, chunkZ, mutableBoundingBox, referenceIn, seedIn);
         }
 
         @Override
-        public void init(ChunkGenerator<?> generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biomeIn) {
+        public void func_230364_a_(DynamicRegistries dynamicRegistryManager, ChunkGenerator generator, TemplateManager templateManagerIn, int chunkX, int chunkZ, Biome biome, NoFeatureConfig config) {
             Rotation rotation = Rotation.values()[this.rand.nextInt(Rotation.values().length)];
             int x = (chunkX << 4) + 7;
             int z = (chunkZ << 4) + 7;
             // offset 12 to get center (roughly), move down 2 because dirt below
-            int surfaceY = Math.max(generator.func_222531_c(x + 12, z + 12, Heightmap.Type.WORLD_SURFACE_WG) - 2, generator.getGroundHeight() - 3);
+            int surfaceY = Math.max(generator.getNoiseHeightMinusOne(x + 12, z + 12, Heightmap.Type.WORLD_SURFACE_WG) - 2, generator.getGroundHeight() - 3);
             BlockPos blockpos = new BlockPos(x, surfaceY, z);
             Piece.start(templateManagerIn, blockpos, rotation, this.components, this.rand);
             this.recalculateStructureSize();
@@ -122,7 +81,7 @@ public class SacredRuinsStructure extends ScatteredStructure<NoFeatureConfig> {
         private Rotation rotation;
 
         public Piece(TemplateManager templateManagerIn, ResourceLocation resourceLocationIn, BlockPos pos, Rotation rotationIn) {
-            super(ToadTerror.RUINS_PIECE_TYPE, 0);
+            super(ModWorldGen.RUINS_PIECE_TYPE, 0);
             this.resourceLocation = resourceLocationIn;
             this.templatePosition = pos;
             this.rotation = rotationIn;
@@ -130,7 +89,7 @@ public class SacredRuinsStructure extends ScatteredStructure<NoFeatureConfig> {
         }
 
         public Piece(TemplateManager templateManagerIn, CompoundNBT tagCompound) {
-            super(ToadTerror.RUINS_PIECE_TYPE, tagCompound);
+            super(ModWorldGen.RUINS_PIECE_TYPE, tagCompound);
             this.resourceLocation = new ResourceLocation(tagCompound.getString("Template"));
             this.rotation = Rotation.valueOf(tagCompound.getString("Rot"));
             this.setupPiece(templateManagerIn);
@@ -141,7 +100,7 @@ public class SacredRuinsStructure extends ScatteredStructure<NoFeatureConfig> {
             int z = pos.getZ();
             BlockPos rotationOffSet = new BlockPos(0, 0, 0).rotate(rotation);
             BlockPos blockpos = rotationOffSet.add(x, pos.getY(), z);
-            pieceList.add(new Piece(templateManager, ModResources.SACRED_RUINS_STRUCTURE, blockpos, rotation));
+            pieceList.add(new Piece(templateManager, new ResourceLocation(ToadTerror.MODID, "sacred_ruins"), blockpos, rotation));
         }
 
         private void setupPiece(TemplateManager templateManager) {
@@ -158,7 +117,7 @@ public class SacredRuinsStructure extends ScatteredStructure<NoFeatureConfig> {
         }
 
         @Override
-        protected void handleDataMarker(String function, BlockPos pos, IWorld worldIn, Random rand, MutableBoundingBox sbb) {
+        protected void handleDataMarker(String function, BlockPos pos, IServerWorld worldIn, Random rand, MutableBoundingBox sbb) {
             if("sentinel".equals(function)) {
                 ToadSentinelEntity e = ModEntities.TOAD_SENTINEL.entityType.create(worldIn.getWorld());
                 e.enablePersistence();
@@ -170,12 +129,11 @@ public class SacredRuinsStructure extends ScatteredStructure<NoFeatureConfig> {
         }
 
         @Override
-        public boolean create(IWorld worldIn, ChunkGenerator<?> p_225577_2_, Random randomIn, MutableBoundingBox structureBoundingBoxIn, ChunkPos chunkPos) {
+        public boolean func_230383_a_(ISeedReader seedReader, StructureManager structureManager, ChunkGenerator chunkGenerator, Random randomIn, MutableBoundingBox structureBoundingBoxIn, ChunkPos chunkPos, BlockPos pos) {
             PlacementSettings placementsettings = (new PlacementSettings()).setRotation(this.rotation).setMirror(Mirror.NONE).addProcessor(BlockIgnoreStructureProcessor.AIR_AND_STRUCTURE_BLOCK);
             BlockPos blockpos = BlockPos.ZERO;
-            this.templatePosition.add(Template.transformedBlockPos(placementsettings, new BlockPos(0 - blockpos.getX(), 0, 0 - blockpos.getZ())));
-
-            return super.create(worldIn, p_225577_2_, randomIn, structureBoundingBoxIn, chunkPos);
+            this.templatePosition.add(Template.transformedBlockPos(placementsettings, new BlockPos(-blockpos.getX(), 0, -blockpos.getZ())));
+            return super.func_230383_a_(seedReader, structureManager, chunkGenerator, randomIn, structureBoundingBoxIn, chunkPos, pos);
         }
     }
 

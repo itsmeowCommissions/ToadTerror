@@ -14,7 +14,6 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPredicate;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
@@ -34,7 +33,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.World;
@@ -73,7 +72,7 @@ public class ToadSentinelEntity extends CreatureEntity {
             @Override
             protected void checkAndPerformAttack(LivingEntity enemy, double distToEnemySqr) {
                 super.checkAndPerformAttack(enemy, distToEnemySqr);
-                ToadSentinelEntity.this.dataManager.set(ATTACK_TICK, attackTick);
+                ToadSentinelEntity.this.dataManager.set(ATTACK_TICK, this.func_234041_j_());
             }
 
             @Override
@@ -83,16 +82,6 @@ public class ToadSentinelEntity extends CreatureEntity {
         });
         this.goalSelector.addGoal(4, new ToadSentinelTongueAttackGoal(this));
         this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<PlayerEntity>(this, PlayerEntity.class, false, false));
-    }
-
-    @Override
-    protected void registerAttributes() {
-        super.registerAttributes();
-        this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(200D);
-        this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
-        this.getAttributes().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5D);
-        this.getAttribute(SharedMonsterAttributes.ATTACK_KNOCKBACK).setBaseValue(2D);
     }
 
     @Override
@@ -159,7 +148,7 @@ public class ToadSentinelEntity extends CreatureEntity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return super.isInvulnerableTo(source) || (source instanceof IndirectEntityDamageSource && source.damageType.equals("arrow")) || source == DamageSource.FIREWORKS || source == DamageSource.FALL;
+        return super.isInvulnerableTo(source) || (source instanceof IndirectEntityDamageSource && source.damageType.equals("arrow")) || source == DamageSource.FALL;
     }
 
     @Override
@@ -295,7 +284,7 @@ public class ToadSentinelEntity extends CreatureEntity {
                 double dirX = (target.getPosX() - toad.getPosX());
                 double dirY = (target.getPosY() - toad.getPosY());
                 double dirZ = (target.getPosZ() - toad.getPosZ());
-                Vec3d targetPos = new Vec3d(dirX, dirY, dirZ).scale(toad.getTongueTicks() / startDistance).add(toad.getPositionVec());
+                Vector3d targetPos = new Vector3d(dirX, dirY, dirZ).scale(toad.getTongueTicks() / startDistance).add(toad.getPositionVec());
                 target.setPositionAndUpdate(targetPos.x, targetPos.y, targetPos.z);
                 if(!attackedThisCycle && toad.getDistanceSq(target) <= getAttackReachSqr(target)) {
                     target.attackEntityFrom(DamageSource.causeMobDamage(toad), 2F);
@@ -433,7 +422,7 @@ public class ToadSentinelEntity extends CreatureEntity {
                 toad.playSound(ModSoundEvents.TOAD_SENTINEL_RIBBIT, 2F, 1F);
                 toad.playSound(ModSoundEvents.TOAD_SENTINEL_RIBBIT, 2F, 1F);
                 if(target.attackEntityFrom(DamageSource.causeMobDamage(toad), 8F)) {
-                    toad.knockBackNoResist(target, !target.onGround ? 6F : 0.5F);
+                    toad.knockBackNoResist(target, !target.isOnGround() ? 6F : 0.5F);
                 }
             }
         }
@@ -448,15 +437,15 @@ public class ToadSentinelEntity extends CreatureEntity {
         float strength = strengthIn;
         double xRatio = this.getPosX() - target.getPosX();
         double zRatio = this.getPosZ() - target.getPosZ();
-        net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(target, this, strength, xRatio, zRatio);
+        net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(target, strength, xRatio, zRatio);
         if(!event.isCanceled()) {
             strength = event.getStrength();
             xRatio = event.getRatioX();
             zRatio = event.getRatioZ();
             target.isAirBorne = true;
-            Vec3d vec3d = target.getMotion();
-            Vec3d vec3d1 = (new Vec3d(xRatio, 0.0D, zRatio)).normalize().scale((double) strength);
-            target.setMotion(vec3d.x / 2.0D - vec3d1.x, target.onGround ? Math.min(0.4D, vec3d.y / 2.0D + (double) strength) : vec3d.y, vec3d.z / 2.0D - vec3d1.z);
+            Vector3d vec3d = target.getMotion();
+            Vector3d vec3d1 = (new Vector3d(xRatio, 0.0D, zRatio)).normalize().scale((double) strength);
+            target.setMotion(vec3d.x / 2.0D - vec3d1.x, target.isOnGround() ? Math.min(0.4D, vec3d.y / 2.0D + (double) strength) : vec3d.y, vec3d.z / 2.0D - vec3d1.z);
         }
     }
 }

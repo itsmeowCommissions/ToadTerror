@@ -1,9 +1,12 @@
 package dev.itsmeow.toadterror.init;
 
+import com.google.common.collect.Sets;
 import dev.itsmeow.toadterror.item.ModItem;
 import dev.itsmeow.toadterror.item.ToadEyeItem;
 import net.minecraft.item.Foods;
 import net.minecraft.item.ItemStack;
+
+import java.util.Set;
 
 public class ModItems {
 
@@ -16,5 +19,9 @@ public class ModItems {
             return 32;
         }
     };
+    private static final Set<ModItem> ITEMS = Sets.newHashSet(ModItems.TOAD_EYE, ModItems.EMPTY_TOAD_EYE, ModItems.BROKEN_TOAD_EYE, ModItems.TOAD_CHOPS);
+    public static Set<ModItem> getAll() {
+        return ITEMS;
+    }
 
 }

@@ -1,7 +1,0 @@
-{
-    "variants": {
-        "type=bottom": { "model": "toadterror:block/chiseled_sacred_stone_brick_slab" },
-        "type=top": { "model": "toadterror:block/chiseled_sacred_stone_brick_slab_top" },
-        "type=double": { "model": "toadterror:block/chiseled_sacred_stone_bricks" }
-    }
-}
